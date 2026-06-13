@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NLP Regex Project</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f4f6fa; color: #222; }
+    header { background: #1F4E79; color: white; padding: 18px 32px; }
+    header h1 { font-size: 22px; }
+    header p  { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+    .tabs { display: flex; gap: 8px; padding: 20px 32px 0; flex-wrap: wrap; }
+    .tab { padding: 8px 18px; border: 1px solid #ccc; border-radius: 6px;
+           cursor: pointer; background: white; font-size: 13px; }
+    .tab.active { background: #2E75B6; color: white; border-color: #2E75B6; }
+    .section { display: none; padding: 24px 32px; }
+    .section.active { display: block; }
+    .card { background: white; border-radius: 10px; padding: 20px;
+            border: 1px solid #dde; margin-bottom: 16px; }
+    label { font-size: 13px; color: #555; display: block; margin-bottom: 6px; margin-top: 12px; }
+    textarea, input[type=text] { width: 100%; padding: 9px; border: 1px solid #ccc;
+      border-radius: 6px; font-family: monospace; font-size: 13px; }
+    textarea { min-height: 80px; resize: vertical; }
+    select { padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; }
+    button { margin-top: 12px; padding: 8px 22px; background: #2E75B6; color: white;
+             border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    button:hover { background: #1F4E79; }
+    .result { margin-top: 14px; background: #f9f9fb; border: 1px solid #dde;
+              border-radius: 8px; padding: 14px; }
+    .badge { display: inline-block; background: #e3f2fd; color: #0d47a1;
+             border-radius: 5px; padding: 3px 10px; font-size: 12px;
+             font-family: monospace; margin: 3px; }
+    .ok  { color: #2e7d32; font-weight: bold; }
+    .err { color: #c62828; font-weight: bold; }
+    pre  { font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+    h3   { font-size: 15px; color: #1F4E79; margin-bottom: 8px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; }
+      .section { padding: 16px; } .tabs { padding: 12px 16px 0; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>NLP Regex Project</h1>
+  <p>Regular Expressions in Natural Language Processing — Interactive Demo</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('extract',this)">1. Extraction</div>
+  <div class="tab" onclick="show('tokenize',this)">2. Tokenization</div>
+  <div class="tab" onclick="show('clean',this)">3. Text Cleaning</div>
+  <div class="tab" onclick="show('validate',this)">4. Validation</div>
+  <div class="tab" onclick="show('custom',this)">5. Custom Pattern</div>
+</div>
+
+<!-- EXTRACTION -->
+<div class="section active" id="sec-extract">
+  <div class="card">
+    <h3>Information Extraction</h3>
+    <label>Enter text containing emails, phones, dates, URLs, hashtags:</label>
+    <textarea id="ext-text">Contact us at support@example.com or call +91-9876543210. Visit https://example.com on 15/08/2024. Follow #NLP @nlp_lab</textarea>
+    <button onclick="runExtract()">Extract</button>
+  </div>
+  <div class="result" id="ext-result" style="display:none;"></div>
+</div>
+
+<!-- TOKENIZE -->
+<div class="section" id="sec-tokenize">
+  <div class="card">
+    <h3>Tokenization</h3>
+    <label>Text:</label>
+    <textarea id="tok-text">NLP is amazing! It handles contractions like don't and can't. Prices: $29.99</textarea>
+    <label>Mode:</label>
+    <select id="tok-mode">
+      <option value="word">Word tokens (\b\w+\b)</option>
+      <option value="sentence">Sentence tokens</option>
+      <option value="alpha">Alphabetic only</option>
+      <option value="nltk">NLTK-style (keep contractions)</option>
+    </select>
+    <button onclick="runTokenize()">Tokenize</button>
+  </div>
+  <div class="result" id="tok-result" style="display:none;"></div>
+</div>
+
+<!-- CLEAN -->
+<div class="section" id="sec-clean">
+  <div class="card">
+    <h3>Text Cleaning</h3>
+    <label>Noisy text:</label>
+    <textarea id="clean-text">BREAKING!!! Visit http://spam.com 😊🔥 #trending @user &amp; $$$SALE$$$   extra   spaces</textarea>
+    <label>Steps to apply:</label>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;">
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-urls" checked> Remove URLs</label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-html" checked> HTML entities</label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-emoji" checked> Emojis</label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-social" checked> Hashtags/mentions</label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-special" checked> Special chars</label>
+      <label style="display:flex;align-items:center;gap:5px;margin:0;"><input type="checkbox" id="c-spaces" checked> Extra spaces</label>
+    </div>
+    <button onclick="runClean()">Clean</button>
+  </div>
+  <div class="result" id="clean-result" style="display:none;"></div>
+</div>
+
+<!-- VALIDATE -->
+<div class="section" id="sec-validate">
+  <div class="card">
+    <h3>Input Validation</h3>
+    <div class="grid2">
+      <div><label>Email</label><input type="text" id="v-email" value="test@example.com"></div>
+      <div><label>Mobile (India)</label><input type="text" id="v-mobile" value="+91-9876543210"></div>
+      <div><label>Date (DD/MM/YYYY)</label><input type="text" id="v-date" value="15/08/2024"></div>
+      <div><label>PAN Number</label><input type="text" id="v-pan" value="ABCDE1234F"></div>
+      <div><label>PIN Code</label><input type="text" id="v-pin" value="600001"></div>
+      <div><label>URL</label><input type="text" id="v-url" value="https://example.com"></div>
+    </div>
+    <button onclick="runValidate()">Validate All</button>
+  </div>
+  <div class="result" id="val-result" style="display:none;"></div>
+</div>
+
+<!-- CUSTOM -->
+<div class="section" id="sec-custom">
+  <div class="card">
+    <h3>Custom Pattern Tester</h3>
+    <label>Regex pattern:</label>
+    <input type="text" id="cust-pattern" value="\b[A-Z][a-z]+\b">
+    <label>Flags: <span style="font-size:12px;color:#888;">i = case-insensitive, g = global, m = multiline</span></label>
+    <input type="text" id="cust-flags" value="g" style="width:80px;">
+    <label>Test text:</label>
+    <textarea id="cust-text">The NLP Institute in Chennai uses AI and Machine Learning. Dr. Smith presented at IEEE 2024.</textarea>
+    <button onclick="runCustom()">Test Pattern</button>
+  </div>
+  <div class="result" id="cust-result" style="display:none;"></div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+async function post(url, data) {
+  const res = await fetch(url, { method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+  return res.json();
+}
+
+function badges(arr) {
+  if (!arr.length) return '<span style="color:#999;">None found</span>';
+  return arr.map(m => `<span class="badge">${m}</span>`).join('');
+}
+
+async function runExtract() {
+  const d = await post('/extract', {text: document.getElementById('ext-text').value});
+  const r = document.getElementById('ext-result');
+  r.style.display = 'block';
+  r.innerHTML = Object.entries(d).map(([k,v]) =>
+    `<div style="margin-bottom:10px;"><strong style="font-size:13px;text-transform:capitalize;">${k}:</strong><br>${badges(v)}</div>`
+  ).join('');
+}
+
+async function runTokenize() {
+  const d = await post('/tokenize', {
+    text: document.getElementById('tok-text').value,
+    mode: document.getElementById('tok-mode').value
+  });
+  const r = document.getElementById('tok-result');
+  r.style.display = 'block';
+  r.innerHTML = `<div style="margin-bottom:10px;font-size:13px;">
+    <strong>Count:</strong> ${d.count} &nbsp; <strong>Unique:</strong> ${d.unique}
+  </div>` + badges(d.tokens);
+}
+
+async function runClean() {
+  const d = await post('/clean', {
+    text: document.getElementById('clean-text').value,
+    urls: document.getElementById('c-urls').checked,
+    html: document.getElementById('c-html').checked,
+    emojis: document.getElementById('c-emoji').checked,
+    social: document.getElementById('c-social').checked,
+    special: document.getElementById('c-special').checked,
+    spaces: document.getElementById('c-spaces').checked
+  });
+  const r = document.getElementById('clean-result');
+  r.style.display = 'block';
+  r.innerHTML = `<div style="font-size:13px;margin-bottom:8px;">
+    <strong>Steps:</strong> ${d.steps.join(' → ')}</div>
+    <div style="font-size:12px;color:#888;margin-bottom:6px;">
+    ${d.original_length} chars → ${d.cleaned_length} chars</div>
+    <pre>${d.cleaned}</pre>`;
+}
+
+async function runValidate() {
+  const fields = [
+    {id:'v-email',field:'email',label:'Email'},
+    {id:'v-mobile',field:'mobile',label:'Mobile'},
+    {id:'v-date',field:'date',label:'Date'},
+    {id:'v-pan',field:'pan',label:'PAN'},
+    {id:'v-pin',field:'pin',label:'PIN Code'},
+    {id:'v-url',field:'url',label:'URL'},
+  ];
+  const results = await Promise.all(fields.map(f =>
+    post('/validate', {field: f.field, value: document.getElementById(f.id).value})
+      .then(d => ({...d, label: f.label}))
+  ));
+  const r = document.getElementById('val-result');
+  r.style.display = 'block';
+  r.innerHTML = results.map(d =>
+    `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;">
+      <span style="font-size:13px;"><strong>${d.label}:</strong> <code>${d.value}</code></span>
+      <span class="${d.valid ? 'ok' : 'err'}">${d.valid ? '✓ Valid' : '✗ Invalid'}</span>
+    </div>`
+  ).join('');
+}
+
+async function runCustom() {
+  const d = await post('/custom', {
+    pattern: document.getElementById('cust-pattern').value,
+    text: document.getElementById('cust-text').value,
+    flags: document.getElementById('cust-flags').value
+  });
+  const r = document.getElementById('cust-result');
+  r.style.display = 'block';
+  if (d.error) { r.innerHTML = `<span class="err">Error: ${d.error}</span>`; return; }
+  r.innerHTML = `<div style="font-size:13px;margin-bottom:10px;">
+    <strong>Matches:</strong> ${d.count} &nbsp; <strong>Unique:</strong> ${d.unique}</div>
+    ${badges(d.matches)}`;
+}
+</script>
+</body>
+</html>

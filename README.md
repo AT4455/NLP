@@ -142,7 +142,7 @@ http://127.0.0.1:5000
 
 ---
 
-## 🎯 Use Cases
+##  Use Cases
 
 - NLP Learning Projects
 - Regex Pattern Testing
@@ -153,7 +153,7 @@ http://127.0.0.1:5000
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 - Named Entity Recognition (NER)
 - Sentiment Analysis
@@ -176,4 +176,4 @@ GitHub: https://github.com/AT4455
 
 This project is licensed under the MIT License.
 
-⭐ If you found this project useful, consider giving it a star on GitHub!
+If you found this project useful, consider giving it a star on GitHub!

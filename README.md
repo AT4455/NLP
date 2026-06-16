@@ -1,4 +1,4 @@
-# NLP Regex Toolkit
+ # NLP Regex Toolkit
 
 A web-based Natural Language Processing (NLP) and Regular Expression Toolkit built using Python and Flask. This project provides various text processing utilities such as information extraction, tokenization, text cleaning, validation, and custom regex matching through an interactive web interface.
 
